@@ -10,7 +10,7 @@
 #include "rcs_log_analyzer.h"
 
 
-// parse timestamp in format "2019-08-26 22:27:03,887"
+// Parse timestamp in format "2019-08-26 22:27:03,887"
 Timestamp::Timestamp(const std::string& ts_str)
 {
 	// parse day which is after the 2nd '-'
@@ -44,6 +44,7 @@ Timestamp::Timestamp(const std::string& ts_str)
 }
 
 
+// Convert milliseconds into graceful string
 std::string RcsLogInsightUtil::formatted_millisec(unsigned long duration) {
 	std::string result = "0ms";
 	
@@ -66,11 +67,12 @@ std::string RcsLogInsightUtil::formatted_millisec(unsigned long duration) {
 	}
 
 	return result;
-
 }
 
 
-// Get time difference in milliseconds
+// Get time difference between two points in time based on two assumptions:
+//	1) 'other' is always later than 'this' object;
+//      2) the difference should be within 24hours;
 long Timestamp::diff(const Timestamp &other)
 {
 	long result = 0;
@@ -162,11 +164,11 @@ AgvDmInfo::AgvDmInfo(const std::string &agv_status_str)
 
 void AgvDmInfo::parse(const std::string& agv_status_str)
 {
-		agv_id_ = RcsLogInsightUtil::get_agv_id(agv_status_str);
-		enter_ = leave_ = RcsLogInsightUtil::get_log_timestamp(agv_status_str);
-		md_code_ = get_md_code(agv_status_str);
-		anti_collision_ = get_anti_collision(agv_status_str);
-		force_stop_ = get_force_stop(agv_status_str);
+	agv_id_ = RcsLogInsightUtil::get_agv_id(agv_status_str);
+	enter_ = leave_ = RcsLogInsightUtil::get_log_timestamp(agv_status_str);
+	md_code_ = get_md_code(agv_status_str);
+	anti_collision_ = get_anti_collision(agv_status_str);
+	force_stop_ = get_force_stop(agv_status_str);
 }
 
 
@@ -184,8 +186,6 @@ bool AgvDmInfo::get_anti_collision(const std::string& log_line)
 	auto str_opto_in_status_b0 = RcsLogInsightUtil::get_field_from_str(
 		log_line, TOKEN_ANTI_COLLISION_START, 1, TOKEN_ANTI_COLLISION_END, 1);
 		
-		
-
 	auto opto_in_status_b0 = std::atoi(str_opto_in_status_b0.c_str());
 	return TEST_BIT(opto_in_status_b0, 1);
 }
@@ -215,10 +215,6 @@ void AgvDmInfo::compute_duration()
 	Timestamp begin(enter_);
 	Timestamp end(leave_);
 	duration_ = end.diff(begin);
-	if (agv_id_ == "agv2" && md_code_ == "4760") {
-		TRACE("4760, enter ", enter_, ", leave_ ", leave_,
-			", duration ", duration_);
-	}
 }
 
 
@@ -246,7 +242,7 @@ bool AgvDmInfo::operator < (const AgvDmInfo &other) const
 bool CRcsLogAnalyzer::stop_work_ = false;
 
 
-// Anaylyze one log line
+// Analyze one log line
 LogItemType CRcsLogAnalyzer::analyze_log(const std::string &log_line,
 	AgvDmInfo &adi, AgvLostInfo &cli)
 {

@@ -51,7 +51,7 @@ private:
 };
 
 
-// Data structure for descring AGV status on some DM code
+// Data structure for describing AGV status on some DM code
 class AgvDmInfo{
 public:
 	AgvDmInfo() = default;
@@ -72,8 +72,8 @@ public:
 	std::string enter_ = "";      // timestamp to reach current DM code
 	std::string leave_ = "";      // timestamp to leave current DM code
 	unsigned long duration_ = 0;  // how long (in milliseconds) AGV stayed on current
-							      // DM code
-	std::string md_code_ = "0";      // value of current DM code
+	                              // DM code
+	std::string md_code_ = "0";   // value of current DM code
 	bool anti_collision_ = false; // If anti_collision is triggered
 	bool force_stop_ = false;     // If force_stop is manually triggered
 };
@@ -122,8 +122,6 @@ typedef void(prog_cb)(long, const AnalysisResult&);
 class CRcsLogAnalyzer
 {
 public:
-
-
 	CRcsLogAnalyzer(const CString& log_file_path)
 		: log_file_path_(log_file_path), result_file_path_(log_file_path) {
 		result_file_path_.Append(CString(".result"));

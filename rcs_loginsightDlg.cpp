@@ -50,9 +50,6 @@ END_MESSAGE_MAP()
 
 
 // CrcsloginsightDlg 对话框
-
-
-
 CrcsloginsightDlg::CrcsloginsightDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_RCS_LOGINSIGHT_DIALOG, pParent)
 {
@@ -113,7 +110,7 @@ BOOL CrcsloginsightDlg::OnInitDialog()
 
 void update_progress(long progress, const AnalysisResult& result)
 {
-	if (progress == -1) {
+	if (progress == -1) { // analysis is done
 		CString info("Totally ");
 		std::string str_result = std::to_string(result.total_lines);
 		str_result += " lines, spent ";
