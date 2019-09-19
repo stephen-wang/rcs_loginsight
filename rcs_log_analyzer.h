@@ -13,16 +13,16 @@
 
 // field tokens
 //// for parsing AGV status report
-#define TOKEN_TIMESTAMP_START      " "
-#define TOKEN_TIMESTAMP_END        " "
-#define TOKEN_AGV_ID_START         "agv"
-#define TOKEN_AGV_ID_END           ":"
-#define TOKEN_MD_CODE_START        "md_code="
-#define TOKEN_MD_CODE_END          ","
-#define TOKEN_ANTI_COLLISION_START "opto_in_status_b0="
-#define TOKEN_ANTI_COLLISION_END   ","
-#define TOKEN_FOR_STOP_START       "opto_out_status_b1="
-#define TOKEN_FOR_STOP_END         ","
+#define TOKEN_TIMESTAMP_START		" "
+#define TOKEN_TIMESTAMP_END		" "
+#define TOKEN_AGV_ID_START		"agv"
+#define TOKEN_AGV_ID_END		":"
+#define TOKEN_MD_CODE_START		"md_code="
+#define TOKEN_MD_CODE_END		","
+#define TOKEN_OPTO_IN_STATUS_B0_START	"opto_in_status_b0="
+#define TOKEN_OPTO_IN_STATUS_B0_END	","
+#define TOKEN_OPTO_OUT_STATUS_B1_START	"opto_out_status_b1="
+#define TOKEN_OPTO_OUT_STATUS_B1_END	","
 
 
 class RcsLogInsightUtil {
@@ -60,22 +60,36 @@ public:
 
 	void parse(const std::string&);
 	std::string get_md_code(const std::string &);
+	bool get_nth_bit_of_opto_in_status_b0(const std::string&, int);
+	bool get_nth_bit_of_opto_out_status_b1(const std::string&, int);
 	bool get_anti_collision(const std::string &);
+	bool get_current_overload(const std::string &);
 	bool get_force_stop(const std::string &);
+	bool get_move_engine_stuck(const std::string &);
+	bool get_left_right_wheels_diff(const std::string &);
+	bool get_dm_code_not_found(const std::string &);
 	void set_leave_time(const std::string &leave);
 	void compute_duration();
 	std::string to_string();
 	bool operator < (const AgvDmInfo&) const;
+	void update(const AgvDmInfo&);
 
 public:
 	std::string agv_id_ = "null";
-	std::string enter_ = "";      // timestamp to reach current DM code
-	std::string leave_ = "";      // timestamp to leave current DM code
-	unsigned long duration_ = 0;  // how long (in milliseconds) AGV stayed on current
-	                              // DM code
-	std::string md_code_ = "0";   // value of current DM code
-	bool anti_collision_ = false; // If anti_collision is triggered
-	bool force_stop_ = false;     // If force_stop is manually triggered
+	std::string enter_ = "";		// timestamp to reach current DM code
+	std::string leave_ = "";		// timestamp to leave current DM code
+	unsigned long duration_ = 0;		// how long (in milliseconds) AGV stayed on current
+	                                        // DM code
+	std::string md_code_ = "0";		// value of current DM code
+	bool anti_collision_ = false;		// If anti_collision is triggered
+	bool current_overload_ = false;		// If current is overloaded
+	bool force_stop_ = false;		// If force_stop is manually triggered
+	bool move_engine_stuck_ = false; 	// If the engine of left/right wheels is stuck
+	bool left_right_wheels_diff_ = false;	// If the calibration difference between left and right wheels
+	                                        // is too big
+	bool dm_code_not_found_ = false;	// If DM code is not found
+	int opto_in_status_b0_ = -1;
+	int opto_out_status_b1_ = -1;
 };
 
 
